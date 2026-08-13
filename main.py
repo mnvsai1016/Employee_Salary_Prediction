@@ -15,197 +15,86 @@ MODEL_DIR = BASE_DIR / "model_files"
 
 st.set_page_config(
     page_title="Tech Compensation Predictor | AI Salary Insights",
-    page_icon="💎",
+    page_icon="💼",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom Injectable CSS with Modern Google Fonts & Glassmorphism Aesthetics
+# Custom Injectable CSS for Streamlit Native Elements & Dark Aesthetic
 st.markdown("""
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-    /* Global Typography & Background */
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
+    /* Metric Styling */
+    [data-testid="stMetricValue"] {
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        color: #38bdf8 !important;
     }
     
-    .stApp {
-        background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
-        color: #f8fafc;
+    [data-testid="stMetricLabel"] {
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        color: #94a3b8 !important;
     }
-
-    /* Glassmorphism Containers */
-    .glass-card {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* Highlight Main Result Card */
+    .hero-salary-card {
+        background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+        border: 2px solid #6366f1;
         border-radius: 20px;
-        padding: 1.8rem;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 1.5rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
     }
-
-    .glass-card:hover {
-        border-color: rgba(99, 102, 241, 0.4);
-    }
-
-    /* Hero Header Styling */
-    .hero-container {
-        background: linear-gradient(135deg, rgba(79, 70, 229, 0.25) 0%, rgba(147, 51, 234, 0.2) 50%, rgba(15, 23, 42, 0.8) 100%);
-        border: 1px solid rgba(129, 140, 248, 0.3);
-        border-radius: 24px;
-        padding: 2.5rem 2rem;
-        text-align: center;
-        margin-bottom: 2rem;
-        box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.25);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(99, 102, 241, 0.2);
-        border: 1px solid rgba(129, 140, 248, 0.4);
-        color: #a5b4fc;
-        padding: 0.4rem 1rem;
-        border-radius: 50px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        margin-bottom: 1rem;
-    }
-
-    .hero-title {
-        background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 50%, #818cf8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2.8rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        margin: 0.5rem 0;
-        line-height: 1.2;
-    }
-
-    .hero-subtitle {
-        color: #94a3b8;
-        font-size: 1.15rem;
-        max-width: 650px;
-        margin: 0 auto;
-        font-weight: 400;
-    }
-
-    /* Result Card Highlight */
-    .result-hero-card {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
-        border: 2px solid rgba(99, 102, 241, 0.5);
-        border-radius: 24px;
-        padding: 2.5rem;
-        text-align: center;
-        box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.3);
-        margin-top: 2rem;
-        animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .main-salary-display {
+    
+    .salary-main-text {
         font-size: 3.8rem;
         font-weight: 800;
-        background: linear-gradient(90deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin: 0.5rem 0 1rem 0;
-        letter-spacing: -0.03em;
-    }
-
-    /* Metric Grid */
-    .metric-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.2rem;
-        margin-top: 1.5rem;
-    }
-
-    .sub-metric-box {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 1.2rem 1rem;
-        text-align: center;
-    }
-
-    .sub-metric-label {
-        font-size: 0.85rem;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-weight: 600;
-    }
-
-    .sub-metric-val {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #f1f5f9;
-        margin-top: 0.3rem;
-    }
-
-    /* Range Visualizer Bar */
-    .range-bar-bg {
-        background: rgba(51, 65, 85, 0.5);
-        height: 12px;
-        border-radius: 10px;
-        position: relative;
-        margin: 2rem 0 1rem 0;
-        overflow: hidden;
-    }
-
-    .range-bar-fill {
-        background: linear-gradient(90deg, #22c55e 0%, #38bdf8 50%, #a855f7 100%);
-        height: 100%;
-        border-radius: 10px;
-    }
-
-    /* Custom Streamlit Dropdowns & MultiSelect */
-    div[data-baseweb="select"] > div {
-        background-color: rgba(15, 23, 42, 0.8) !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        border-radius: 12px !important;
-        color: #f8fafc !important;
+        color: #38bdf8;
+        margin: 0.5rem 0;
+        letter-spacing: -0.02em;
     }
     
-    div[data-baseweb="select"] span {
-        color: #f8fafc !important;
+    .tier-badge {
+        display: inline-block;
+        background: rgba(99, 102, 241, 0.25);
+        border: 1px solid #818cf8;
+        color: #c7d2fe;
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .header-banner {
+        background: linear-gradient(135deg, #312e81 0%, #1e1b4b 50%, #0f172a 100%);
+        border: 1px solid #4338ca;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
     }
 
-    /* Buttons */
-    .stButton > button {
-        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    /* Tab Header Customization */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 12px;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: #1e293b;
+        border-radius: 10px;
+        color: #94a3b8;
+        font-weight: 600;
+        padding: 10px 20px;
+    }
+
+    .stTabs [aria-selected="true"] {
+        background-color: #4f46e5 !important;
         color: #ffffff !important;
-        font-weight: 700 !important;
-        font-size: 1.1rem !important;
-        padding: 0.8rem 2rem !important;
-        border-radius: 14px !important;
-        border: none !important;
-        box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.5) !important;
-        transition: all 0.2s ease !important;
-        width: 100%;
-    }
-
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.7) !important;
-    }
-
-    /* Keyframe Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -237,8 +126,7 @@ except Exception as err:
 # Sidebar Controls
 # -----------------------------------------------------------------------------
 with st.sidebar:
-    st.image("https://img.icons8.com/isometric-line/100/money-bag-bitcoin.png", width=70)
-    st.title("⚙️ Currency & Settings")
+    st.title("💼 Settings")
     
     currency = st.selectbox(
         "Display Currency",
@@ -246,7 +134,6 @@ with st.sidebar:
         index=0
     )
     
-    # Currency Rates dictionary
     rates = {
         "USD ($)": (1.0, "$", "USD"),
         "EUR (€)": (0.92, "€", "EUR"),
@@ -258,26 +145,25 @@ with st.sidebar:
     multiplier, symbol, curr_code = rates[currency]
 
     st.markdown("---")
-    st.markdown("### 🤖 Model Information")
-    st.info("""
-    **Model Architecture**: XGBoost Regressor  
-    **Trained On**: Stack Overflow Developer Data  
-    **Features Evaluated**: 50+ Tech Stack Indicators  
-    **Prediction Metrics**: Base Compensation
+    st.subheader("🤖 Model Summary")
+    st.markdown("""
+    - **Model**: XGBoost Regressor  
+    - **Dataset**: Global Developer Survey  
+    - **Features Evaluated**: 50+ Tech Stack Indicators  
+    - **Target**: Annual Base Compensation
     """)
 
     st.markdown("---")
-    st.markdown("💡 *Tip: Adding more specific technologies improves market alignment.*")
+    st.caption("💡 *Tip: Selecting your specific skills improves prediction accuracy.*")
 
 
 # -----------------------------------------------------------------------------
-# Hero Section Header
+# Hero Header
 # -----------------------------------------------------------------------------
 st.markdown("""
-<div class="hero-container">
-    <div class="hero-badge">✨ Machine Learning Powered Insights</div>
-    <div class="hero-title">Tech Compensation Predictor</div>
-    <div class="hero-subtitle">Estimate your market value based on real global developer survey data, experience tier, and technical skill stack.</div>
+<div class="header-banner">
+    <h1 style="color: #ffffff; margin: 0; font-size: 2.6rem;">💼 Tech Salary Predictor</h1>
+    <p style="color: #a5b4fc; font-size: 1.1rem; margin-top: 0.5rem;">Estimate your annual market compensation using machine learning</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -413,26 +299,23 @@ developer_tools = [
 
 
 # -----------------------------------------------------------------------------
-# Interactive Tabbed Form
+# Input Form UI
 # -----------------------------------------------------------------------------
 tab1, tab2, tab3 = st.tabs([
-    "👤  1. Demographics & Experience",
-    "💻  2. Core Tech Stack",
-    "🛠️  3. Tools, Cloud & Databases"
+    "👤 1. Demographics & Experience",
+    "💻 2. Core Tech Stack",
+    "🛠️ 3. Cloud, DBs & Tools"
 ])
 
 with tab1:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.subheader("Personal & Professional Profile")
     col1, col2 = st.columns(2)
     with col1:
         current_job = st.selectbox(
             "Primary Role *",
-            ["Select an option"] + job_options,
-            help="Select the option that best reflects your current day-to-day work."
+            ["Select an option"] + job_options
         )
         education = st.selectbox(
-            "Highest Formal Education *",
+            "Highest Education Level *",
             ["Select an option"] + education_options
         )
         country = st.selectbox(
@@ -447,24 +330,20 @@ with tab1:
         )
         experience = st.number_input(
             "Years of Professional Experience",
-            min_value=0, max_value=50, value=4, step=1,
-            help="Total years of full-time professional coding/tech experience."
+            min_value=0, max_value=50, value=4, step=1
         )
         work_situation = st.selectbox(
-            "Work Arrangement",
+            "Work Setup",
             ["Select an option"] + work_situation_options
         )
 
     employment_status = st.multiselect(
-        "Current Employment Status",
+        "Employment Status",
         employment_options,
         default=["Employed, full-time"]
     )
-    st.markdown('</div>', unsafe_allow_html=True)
 
 with tab2:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.subheader("Languages & Frameworks")
     col_s1, col_s2 = st.columns(2)
     with col_s1:
         selected_languages = st.multiselect(
@@ -479,18 +358,15 @@ with tab2:
         )
     with col_s2:
         selected_other_frameworks = st.multiselect(
-            "ML & Data Frameworks (e.g., PyTorch, Pandas, Scikit-Learn)",
+            "ML & Data Frameworks",
             other_frameworks
         )
         selected_embedded = st.multiselect(
-            "Embedded & C++ Systems/Build Tools",
+            "Embedded & C++ Systems Tools",
             embedded_systems
         )
-    st.markdown('</div>', unsafe_allow_html=True)
 
 with tab3:
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.subheader("Infrastructure, Databases & Dev Tools")
     col_t1, col_t2 = st.columns(2)
     with col_t1:
         selected_cloud = st.multiselect(
@@ -505,19 +381,18 @@ with tab3:
         )
     with col_t2:
         selected_tools = st.multiselect(
-            "Developer Tools & DevOps (e.g., Docker, Kubernetes, Git)",
+            "Developer Tools & DevOps",
             developer_tools,
             default=["Docker", "npm"] if "Docker" in developer_tools else []
         )
-    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------
 # Trigger & Results Display
 # -----------------------------------------------------------------------------
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("---")
 
-if st.button("✨ Predict Target Compensation", type="primary"):
+if st.button("🚀 Calculate Estimated Salary", type="primary", use_container_width=True):
     # Validation Check
     if current_job == "Select an option" or education == "Select an option" or country == "Select an option" or age == "Select an option":
         st.warning("⚠️ Please complete all required profile fields marked with (*) in Tab 1 before predicting.")
@@ -539,7 +414,7 @@ if st.button("✨ Predict Target Compensation", type="primary"):
             "ToolsHaveWorkedWith": selected_tools
         }
 
-        with st.spinner("⚡ Running XGBoost inference & processing profile vector..."):
+        with st.spinner("⚡ Running model prediction..."):
             try:
                 # Preprocess input data
                 input_df = pd.DataFrame([form_data])
@@ -554,9 +429,7 @@ if st.button("✨ Predict Target Compensation", type="primary"):
                 margin = 0.10
                 lower_bound = round(predicted_salary * (1 - margin))
                 upper_bound = round(predicted_salary * (1 + margin))
-
                 monthly_salary = round(predicted_salary / 12)
-                hourly_rate = round(predicted_salary / 2080, 2)
 
                 # Seniority Tier Tag
                 if experience < 3:
@@ -568,42 +441,32 @@ if st.button("✨ Predict Target Compensation", type="primary"):
                 else:
                     tier = "👑 Executive / Principal Specialist"
 
-                # Render Modern Visual Results Hero Card
+                # 1. Main Hero Container
                 st.markdown(f"""
-                <div class="result-hero-card">
-                    <div style="font-size: 0.9rem; color: #a5b4fc; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
-                        Estimated Annual Compensation Package ({curr_code})
+                <div class="hero-salary-card">
+                    <div style="color: #a5b4fc; font-size: 0.9rem; text-transform: uppercase; font-weight: 700;">
+                        Estimated Annual Base Compensation ({curr_code})
                     </div>
-                    <div class="main-salary-display">{symbol}{predicted_salary:,.0f}</div>
-                    <div style="display: inline-block; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); color: #c7d2fe; padding: 0.4rem 1.2rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem;">
-                        {tier}
-                    </div>
-
-                    <div class="range-bar-bg">
-                        <div class="range-bar-fill"></div>
-                    </div>
-
-                    <div class="metric-grid">
-                        <div class="sub-metric-box">
-                            <div class="sub-metric-label">Estimated Min (10th%)</div>
-                            <div class="sub-metric-val" style="color: #22c55e;">{symbol}{lower_bound:,.0f}</div>
-                        </div>
-                        <div class="sub-metric-box">
-                            <div class="sub-metric-label">Monthly Equivalent</div>
-                            <div class="sub-metric-val" style="color: #38bdf8;">{symbol}{monthly_salary:,.0f} / mo</div>
-                        </div>
-                        <div class="sub-metric-box">
-                            <div class="sub-metric-label">Estimated Max (90th%)</div>
-                            <div class="sub-metric-val" style="color: #c084fc;">{symbol}{upper_bound:,.0f}</div>
-                        </div>
-                    </div>
+                    <div class="salary-main-text">{symbol}{predicted_salary:,.0f}</div>
+                    <div class="tier-badge">{tier}</div>
                 </div>
                 """, unsafe_allow_html=True)
+
+                # 2. Native Streamlit Columns & Metrics (Guaranteed Clean Rendering)
+                m1, m2, m3 = st.columns(3)
+                with m1:
+                    st.metric(label="Estimated Min (10th%)", value=f"{symbol}{lower_bound:,.0f}")
+                with m2:
+                    st.metric(label="Monthly Equivalent", value=f"{symbol}{monthly_salary:,.0f} / mo")
+                with m3:
+                    st.metric(label="Estimated Max (90th%)", value=f"{symbol}{upper_bound:,.0f}")
+
+                st.progress(0.50, text="Estimated Market Salary Percentile Range")
 
                 st.balloons()
 
                 # Collapsible Summary of Inputs
-                with st.expander("📋 View Submitted Feature Payload"):
+                with st.expander("📋 View Submitted Profile Data"):
                     st.json(form_data)
 
             except Exception as e:
