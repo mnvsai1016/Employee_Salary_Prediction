@@ -1,5 +1,6 @@
 import os
 import pickle
+import zipfile
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -8,15 +9,41 @@ from sklearn.preprocessing import MultiLabelBinarizer
 # Define base directory to safely locate model assets relative to this script
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_DIR = BASE_DIR / "model_files"
+ZIP_PATH = BASE_DIR / "model_files.zip"
+
+
+def ensure_model_files_extracted():
+    """Automatically extract model_files.zip if model assets are missing (e.g. on Streamlit Cloud)."""
+    salary_model_file = MODEL_DIR / "salary_model.pkl"
+    if not salary_model_file.exists():
+        if ZIP_PATH.exists():
+            print("Extracting model_files.zip automatically...")
+            with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+                zip_ref.extractall(BASE_DIR)
+
+            # Handle nested folder structure if zip contains a top-level model_files folder
+            nested_dir = MODEL_DIR / "model_files"
+            if nested_dir.exists():
+                for file_path in nested_dir.glob("*"):
+                    target_path = MODEL_DIR / file_path.name
+                    file_path.replace(target_path)
+                try:
+                    nested_dir.rmdir()
+                except Exception:
+                    pass
+        else:
+            raise FileNotFoundError(
+                f"Neither {MODEL_DIR} nor {ZIP_PATH} were found in {BASE_DIR}."
+            )
 
 
 def load_model_asset(filename: str):
     """Safely load a pickle file from the model_files directory."""
+    ensure_model_files_extracted()
     filepath = MODEL_DIR / filename
     if not filepath.exists():
         raise FileNotFoundError(
-            f"Required model asset '{filename}' not found in {MODEL_DIR}. "
-            "Please extract model_files.zip before running."
+            f"Required model asset '{filename}' not found in {MODEL_DIR} after extraction."
         )
     with open(filepath, "rb") as f:
         return pickle.load(f)
@@ -115,7 +142,7 @@ def Preprocess(input_data: pd.DataFrame) -> pd.DataFrame:
     if 'WorkExp' in df.columns:
         df['WorkExp'] = np.log1p(df['WorkExp'].fillna(0))
 
-    # 9. Feature Alignment with Saved Feature List using reindex (avoids fragmentation)
+    # 9. Feature Alignment with Saved Feature List using reindex
     saved_features = load_model_asset("features.pkl")
     df = df.reindex(columns=saved_features, fill_value=0)
 

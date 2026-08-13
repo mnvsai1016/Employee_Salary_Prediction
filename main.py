@@ -1,10 +1,11 @@
 import pickle
+import zipfile
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import streamlit as st
 
-from preprocess import Preprocess, load_model_asset
+from preprocess import Preprocess, ensure_model_files_extracted, load_model_asset
 
 # -----------------------------------------------------------------------------
 # Configuration & Setup
@@ -72,7 +73,7 @@ st.markdown("""
     
     .range-box {
         display: flex;
-        justify-content: space-around;
+        justify-space: space-around;
         background: #1e293b;
         padding: 1rem;
         border-radius: 12px;
@@ -104,10 +105,11 @@ st.markdown("""
 # -----------------------------------------------------------------------------
 @st.cache_resource
 def load_trained_model():
-    """Cache and load the pre-trained salary prediction model."""
+    """Cache and load the pre-trained salary prediction model, extracting zip if needed."""
+    ensure_model_files_extracted()
     model_path = MODEL_DIR / "salary_model.pkl"
     if not model_path.exists():
-        st.error(f"❌ Model file not found at {model_path}. Please ensure model_files.zip is extracted.")
+        st.error(f"❌ Model file not found at {model_path}. Please ensure model_files.zip is present.")
         st.stop()
     with open(model_path, "rb") as f:
         return pickle.load(f)
