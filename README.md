@@ -1,13 +1,15 @@
 # 💼 Tech Employee Salary Predictor
 
+[![Live Demo](https://img.shields.io/badge/Streamlit-Live_Demo-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://aicte-garbage-classification-gulhvfufutenpadaywjixg.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.28%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.3%2B-F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![XGBoost](https://img.shields.io/badge/XGBoost-1.7%2B-EB5424.svg?logo=xgboost&logoColor=white)](https://xgboost.readthedocs.io/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](Dockerfile)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An end-to-end Machine Learning web application built with **Streamlit**, **Pandas**, **Scikit-Learn**, and **XGBoost** to predict global software developer and tech employee salaries based on demographics, experience, job roles, and technical skill stacks.
+
+👉 **[Click Here to Open the Live Web Application](https://aicte-garbage-classification-gulhvfufutenpadaywjixg.streamlit.app/)**
 
 ---
 
@@ -16,7 +18,8 @@ An end-to-end Machine Learning web application built with **Streamlit**, **Panda
 - **🎨 Modern Tabbed Interface**: Structured step-by-step survey layout divided into Demographics, Tech Stack, and Developer Tools.
 - **⚡ Fast Inference with Caching**: Resource-cached model loading using `@st.cache_resource` for instant salary estimations without performance lag.
 - **🛡️ Built-in Input Validation**: Dynamic form validation ensuring complete profile inputs before invoking model prediction.
-- **📊 Detailed Salary Ranges**: Displays a median annual salary estimate alongside an estimated range ($\pm 10\%$) with high-contrast UI metrics.
+- **📊 Detailed Salary Ranges**: Displays median annual salary estimates alongside $\pm 10\%$ error margins using high-contrast UI metrics.
+- **💱 Multi-Currency Conversion**: Toggle between USD ($), EUR (€), GBP (£), INR (₹), CAD ($), and AUD ($) with live rate multipliers.
 - **🔧 Automated Feature Alignment**: Robust preprocessing pipeline transforming multi-label lists, ordinal categories, and log-scaled experience with feature reindexing.
 - **🐳 Docker Containerized**: Ready for containerized deployment across cloud providers (AWS, GCP, Azure, Render).
 
@@ -126,12 +129,6 @@ docker run -d -p 8501:8501 --name salary-app employee-salary-predictor
 ```
 
 Access the app at `http://localhost:8501`.
-
-### Option 3: Hugging Face Spaces (Free hosting)
-
-1. Create a new Space on [Hugging Face Spaces](https://huggingface.co/spaces).
-2. Select **Streamlit** as the SDK.
-3. Push your repository files. Hugging Face will automatically build and host the app.
 
 ---
 
